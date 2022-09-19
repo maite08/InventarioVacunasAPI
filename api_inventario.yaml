@@ -1,0 +1,230 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080/
+    description: Generated server url
+paths:
+  /registrar:
+    post:
+      tags:
+        - user-controller
+      operationId: registrar
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuarios'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JwtRespuesta'
+  /listarTipoVacuna:
+    get:
+      tags:
+        - user-controller
+      operationId: listarTipoVacuna
+      parameters:
+        - name: tipoVacuna
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /listarRangoVacunacion:
+    get:
+      tags:
+        - user-controller
+      operationId: listarRangoVacunacion
+      parameters:
+        - name: dateInicio
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: dateFin
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /listarEstadoVacunacion:
+    get:
+      tags:
+        - user-controller
+      operationId: listarEstadoVacunacion
+      parameters:
+        - name: estadoVacunacion
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /eliminarEmpleado/{username}:
+    delete:
+      tags:
+        - user-controller
+      operationId: eliminarEmpleado
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JwtRespuesta'
+  /authenticate:
+    post:
+      tags:
+        - jwt-controller
+      operationId: createJwtToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JwtRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+  /actualizarEmpleado:
+    post:
+      tags:
+        - user-controller
+      operationId: actualizarEmpleado
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpleadosRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JwtRespuesta'
+components:
+  schemas:
+    Role:
+      type: object
+      properties:
+        nombre:
+          type: string
+        estadoRegistro:
+          type: boolean
+        roleDescription:
+          type: string
+    Usuarios:
+      required:
+        - password
+      type: object
+      properties:
+        username:
+          maxLength: 10
+          minLength: 0
+          type: string
+        password:
+          maxLength: 100
+          minLength: 6
+          type: string
+        role:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        nombres:
+          type: string
+        apellidos:
+          type: string
+        correo:
+          type: string
+    JwtRespuesta:
+      type: object
+      properties:
+        respuesta:
+          type: boolean
+        mensaje:
+          type: string
+    JwtRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    JwtResponse:
+      type: object
+      properties:
+        usuario:
+          $ref: '#/components/schemas/Usuarios'
+        jwtToken:
+          type: string
+    EmpleadosRequest:
+      required:
+        - apellidos
+        - correo
+      type: object
+      properties:
+        username:
+          maxLength: 10
+          minLength: 0
+          type: string
+        nombres:
+          type: string
+        apellidos:
+          type: string
+        correo:
+          maxLength: 100
+          minLength: 0
+          type: string
+        fechaNacimiento:
+          type: string
+        direccion:
+          type: string
+        telefono:
+          type: string
+        estadoVacuna:
+          type: boolean
+        tipoVacuna:
+          type: string
+        numeroDosis:
+          type: string
+        fechaVacunacion:
+          type: string
